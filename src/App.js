@@ -1,48 +1,30 @@
 // src/App.js
-import React, { useState, useEffect } from 'react'; // Importing useState and useEffect
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import HomeFeed from './pages/HomeFeed'; // Ensure this matches your file name
-import NewPost from './pages/NewPost';
-import axios from 'axios';
+import HomeFeed from './pages/HomeFeed';
+import Profile from './pages/Profile';
+import { AuthProvider } from './context/UserContext';
+import { PostProvider } from './context/PostContext';
+import './App.css';
 
 const App = () => {
-    const [posts, setPosts] = useState([]); // Define posts state
-
-    // Function to fetch posts from the API
-    const fetchPosts = async () => {
-        try {
-            const response = await axios.get('/api/posts'); // Replace with your API endpoint
-            setPosts(response.data); // Update the posts state with the fetched data
-        } catch (error) {
-            console.error("Error fetching posts:", error);
-        }
-    };
-
-    // Effect to fetch posts on initial render
-    useEffect(() => {
-        fetchPosts();
-    }, []);
-
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route 
-                    path="/homefeed" 
-                    element={<HomeFeed posts={posts} fetchPosts={fetchPosts} />} 
-                />
-                <Route 
-                    path="/new-post" 
-                    element={<NewPost onPostCreated={fetchPosts} />} 
-                />
-                {/* Add more routes here, like Profile, Messages, etc. */}
-            </Routes>
-        </Router>
+        <AuthProvider>
+            <PostProvider> {/* Wrap the application with PostProvider */}
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/homefeed/" element={<HomeFeed />} />
+                        <Route path="/profile/:userId" element={<Profile />} />
+                    </Routes>
+                </Router>
+            </PostProvider>
+        </AuthProvider>
     );
 };
 

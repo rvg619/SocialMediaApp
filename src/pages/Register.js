@@ -1,6 +1,7 @@
 // src/pages/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../axiosInstance'; // Ensure you're importing axios
 
 const Register = () => {
   const navigate = useNavigate();
@@ -9,17 +10,25 @@ const Register = () => {
     email: '',
     password: '',
   });
+  const [error, setError] = useState(''); // State to hold error messages
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setError(''); // Clear error message on input change
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your registration logic here
-    console.log('User registered with:', formData);
-    navigate('/homefeed'); // Redirect to homefeed after successful registration
+    try {
+      const response = await axiosInstance.post('/api/users/register', formData);
+      console.log('Registration successful:', response.data);
+      navigate('/login'); // Redirect to homefeed after successful registration
+    } catch (error) {
+      console.error("Registration error:", error.response.data);
+      // Display the error message from the server
+      setError(error.response.data.message || 'Registration failed. Please try again.');
+    }
   };
 
   return (
@@ -28,6 +37,7 @@ const Register = () => {
       <p className="mb-6 text-gray-300 text-center max-w-md">
         Join BlogCentral to share your thoughts, connect with others, and stay updated with the latest posts.
       </p>
+      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error messages */}
       <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
         <input
           type="text"
