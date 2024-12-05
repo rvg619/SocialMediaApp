@@ -1,15 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { usePostContext } from '../context/PostContext';
-import { FaHeart, FaCommentDots, FaClock, FaBell, FaUser, FaSignOutAlt, FaPlusCircle, FaShare, FaBookmark, FaMapMarkerAlt, FaSmile, FaPaperclip, FaPaperPlane, FaImage } from 'react-icons/fa';
+import { FaHeart, FaCommentDots, FaUser, FaSignOutAlt, FaPaperPlane } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
 
 const HomeFeed = () => {
   const navigate = useNavigate();
-  const { user, setUser} = useContext(UserContext);
-  const { posts, fetchPosts, likePost, commentOnPost, sharePost, savePost, addPost } = usePostContext();
+  const { user } = useContext(UserContext);
+  const { posts, fetchPosts, likePost, commentOnPost, addPost } = usePostContext();
   const location = useLocation();
 
   const [loading, setLoading] = useState(true);
@@ -28,7 +27,6 @@ const HomeFeed = () => {
 
   useEffect(() => {
     const loadPosts = async () => {
-      console.log('HomeFeed: Loading posts');
       setLoading(true);
       await fetchPosts();
       setLoading(false);
@@ -53,9 +51,9 @@ const HomeFeed = () => {
   };
 
   const handleCommentClick = (postId) => {
-    setOpenComments(prevState => ({
+    setOpenComments((prevState) => ({
       ...prevState,
-      [postId]: !prevState[postId]
+      [postId]: !prevState[postId],
     }));
     if (!openComments[postId]) {
       setCommentingPost(postId);
@@ -75,11 +73,6 @@ const HomeFeed = () => {
     }
   };
 
-  const handleUsernameClick = async (userId) => {        
-    console.log('homefeed User ID:', userId);
-    navigate(`/profile/${userId}`);
-  };
-
   const handleNewPostSubmit = async (e) => {
     e.preventDefault();
     if (!newPostContent.trim()) return;
@@ -90,22 +83,12 @@ const HomeFeed = () => {
       setNewPostContent('');
       await fetchPosts();
     } catch (error) {
-      setPostError("Failed to create post. Please try again.");
+      setPostError('Failed to create post. Please try again.');
       console.error('Error creating post:', error);
     } finally {
       setIsSubmittingPost(false);
     }
   };
-
-  const handleSharePost = async (postId) => {
-    try {
-        await axios.post(`/api/posts/${postId}/share`);
-        await fetchPosts(); // Refresh the posts
-    } catch (error) {
-        console.error('Error sharing post:', error);
-    }
-  };
-
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen text-white">
@@ -166,11 +149,7 @@ const HomeFeed = () => {
               onChange={(e) => setNewPostContent(e.target.value)}
               rows="3"
             />
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex space-x-4">
-                <FaImage className="text-gray-400 cursor-pointer hover:text-blue-400 transition duration-200" />
-                <FaSmile className="text-gray-400 cursor-pointer hover:text-blue-400 transition duration-200" />
-              </div>
+            <div className="flex justify-end mt-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -190,7 +169,7 @@ const HomeFeed = () => {
             <motion.div 
               className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mx-auto"
               animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             />
             <p className="mt-4 text-gray-400">Loading posts...</p>
           </div>
@@ -204,7 +183,7 @@ const HomeFeed = () => {
             transition={{ delay: 0.4 }}
           >
             <AnimatePresence>
-              {posts && posts.map((post) => (post && 
+              {posts && posts.map((post) => (
                 <motion.div
                   key={post._id}
                   className="bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-lg p-6 rounded-lg shadow-lg transition duration-300 hover:shadow-xl"
@@ -220,15 +199,11 @@ const HomeFeed = () => {
                       </div>
                       <div>
                         <button 
-                          onClick={() => handleUsernameClick(post.user)}
+                          onClick={() => navigate(`/profile/${post.user}`)}
                           className="font-semibold text-white text-lg hover:underline"
                         >
                           {post?.username || 'Unknown'}
                         </button>
-                        <div className="flex items-center text-gray-400 text-sm">
-                          <FaClock className="mr-1" />
-                          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -236,51 +211,28 @@ const HomeFeed = () => {
                   <p className="text-lg mb-6 leading-relaxed">{post.content}</p>
   
                   <div className="flex justify-between items-center text-gray-400 mt-4 pt-3 border-t border-gray-700">
-                    <div className="flex space-x-6">
-                      <motion.button 
-                        onClick={() => handleLikeClick(post._id, user._id)}
-                        disabled={likingPost === post._id}
-                        className={`flex items-center space-x-2 transition-colors duration-200 ${likingPost === post._id ? 'text-gray-500' : 'hover:text-red-500'}`}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <FaHeart className={`text-xl ${post.likes && post.likes.includes(user._id) ? 'text-red-500' : ''}`} />
-                        <span>{post.likes && post.likes.length}</span>
-                      </motion.button>
-  
-                      <motion.button 
-                        onClick={() => handleCommentClick(post._id)}
-                        className="flex items-center space-x-2 transition-colors duration-200 hover:text-blue-500"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <FaCommentDots className="text-xl" />
-                        <span>{post.comments && post.comments.length}</span>
-                      </motion.button>
-  
-                      <motion.button 
-                          onClick={() => handleSharePost(post._id)}
-                          className="flex items-center space-x-2 transition-colors duration-200 hover:text-green-500"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                      >
-                          <FaShare className="text-xl" />
-                          <span>{post.shares || 0}</span>
-                      </motion.button>
+                    <motion.button 
+                      onClick={() => handleLikeClick(post._id, user._id)}
+                      disabled={likingPost === post._id}
+                      className={`flex items-center space-x-2 transition-colors duration-200 ${likingPost === post._id ? 'text-gray-500' : 'hover:text-red-500'}`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <FaHeart className={`text-xl ${post.likes && post.likes.includes(user._id) ? 'text-red-500' : ''}`} />
+                      <span>{post.likes && post.likes.length}</span>
+                    </motion.button>
 
-  
-                      <motion.button 
-                        onClick={() => savePost(post._id)}
-                        className="flex items-center space-x-2 transition-colors duration-200 hover:text-yellow-500"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <FaBookmark className="text-xl" />
-                        <span>Save</span>
-                      </motion.button>
-                    </div>
+                    <motion.button 
+                      onClick={() => handleCommentClick(post._id)}
+                      className="flex items-center space-x-2 transition-colors duration-200 hover:text-blue-500"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <FaCommentDots className="text-xl" />
+                      <span>{post.comments && post.comments.length}</span>
+                    </motion.button>
                   </div>
-  
+
                   <AnimatePresence>
                     {openComments[post._id] && (
                       <motion.div 
@@ -302,7 +254,6 @@ const HomeFeed = () => {
                               >
                                 <div className="flex items-center space-x-2 mb-1">
                                   <span className="text-sm font-semibold text-blue-400">{comment.author || 'Anonymous'}</span>
-                                  <span className="text-xs text-gray-500">• {new Date(comment.createdAt).toLocaleString()}</span>
                                 </div>
                                 <p className="text-gray-300">{comment.content}</p>
                               </motion.div>

@@ -1,10 +1,13 @@
-// src/pages/AdminDashboard.js
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaSignOutAlt } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+
   const adminToken = localStorage.getItem('adminToken');
 
   useEffect(() => {
@@ -26,6 +29,11 @@ const AdminDashboard = () => {
 
     fetchAdminData();
   }, [adminToken]);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('adminToken'); // Clear admin token from localStorage
+    navigate('/admin/login'); // Redirect to admin login page
+  };
 
   const handleDeleteUser = async (userId) => {
     try {
@@ -50,66 +58,80 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="p-8 bg-gray-900 min-h-screen text-white">
-      <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+    <div className="bg-gray-900 min-h-screen text-white">
+      {/* Admin Dashboard Header */}
+      <nav className="bg-gray-800 p-4 shadow-md flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-blue-400">Admin Dashboard</h1>
+        <button
+          onClick={handleSignOut}
+          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full flex items-center"
+        >
+          <FaSignOutAlt className="text-xl mr-2" />
+          Sign Out
+        </button>
+      </nav>
 
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Users</h2>
-        <table className="w-full table-auto">
-          <thead>
-            <tr className="bg-gray-800">
-              <th className="px-4 py-2">Username</th>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user._id} className="border-b border-gray-700">
-                <td className="px-4 py-2">{user.username}</td>
-                <td className="px-4 py-2">{user.email}</td>
-                <td className="px-4 py-2">
-                  <button
-                    onClick={() => handleDeleteUser(user._id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                  >
-                    Delete User
-                  </button>
-                </td>
+      <div className="p-8">
+        {/* Users Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Users</h2>
+          <table className="w-full table-auto bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-700">
+              <tr>
+                <th className="px-4 py-2 text-left">Username</th>
+                <th className="px-4 py-2 text-left">Email</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user._id} className="border-b border-gray-700">
+                  <td className="px-4 py-2">{user.username}</td>
+                  <td className="px-4 py-2">{user.email}</td>
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => handleDeleteUser(user._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Posts</h2>
-        <table className="w-full table-auto">
-          <thead>
-            <tr className="bg-gray-800">
-              <th className="px-4 py-2">Content</th>
-              <th className="px-4 py-2">Author</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {posts.map((post) => (
-              <tr key={post._id} className="border-b border-gray-700">
-                <td className="px-4 py-2">{post.content}</td>
-                <td className="px-4 py-2">{post.username}</td>
-                <td className="px-4 py-2">
-                  <button
-                    onClick={() => handleDeletePost(post._id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                  >
-                    Delete Post
-                  </button>
-                </td>
+        {/* Posts Section */}
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Posts</h2>
+          <table className="w-full table-auto bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-700">
+              <tr>
+                <th className="px-4 py-2 text-left">Content</th>
+                <th className="px-4 py-2 text-left">Author</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            </thead>
+            <tbody>
+              {posts.map((post) => (
+                <tr key={post._id} className="border-b border-gray-700">
+                  <td className="px-4 py-2">{post.content}</td>
+                  <td className="px-4 py-2">{post.username}</td>
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => handleDeletePost(post._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      </div>
     </div>
   );
 };

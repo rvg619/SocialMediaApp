@@ -95,10 +95,9 @@ const ProfileActivityComponent = React.memo(({ userId }) => {
           } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleFollowToggle}
       >
-        {isLoading ? 'Loading...' : (isCurrentUser ? (
-          <><FaEdit className="mr-2" />Edit Profile</>
-        ) : (
-          <>{isFollowing ? <FaUserMinus className="mr-2" /> : <FaUserPlus className="mr-2" />}
+        ```
+                {isLoading ? 'Loading...' : (isCurrentUser ? null : (
+                  <>{isFollowing ? <FaUserMinus className="mr-2" /> : <FaUserPlus className="mr-2" />}
           {isFollowing ? 'Unfollow' : 'Follow'}</>
         ))}
       </motion.button>

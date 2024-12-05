@@ -25,6 +25,12 @@ const Home = () => {
               Login
             </button>
             <button 
+              onClick={() => navigate('/admin/login')}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
+            >
+              Admin Login
+            </button>
+            <button 
               onClick={() => navigate('/register')}
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
             >
