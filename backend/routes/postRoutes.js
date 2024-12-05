@@ -24,4 +24,7 @@ router.post('/:pid/:uid/comment', auth, postController.addComment);
 // Route to delete a post by ID - protected
 router.delete('/:id', auth, postController.deletePost);
 
+router.post('/:id/share', auth, postController.sharePost);
+
+
 export default router;

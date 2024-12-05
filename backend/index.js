@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -22,7 +23,7 @@ connectDB();
 // Routes
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
-
+app.use('/api/admin', adminRoutes);
 
 
 // Start server

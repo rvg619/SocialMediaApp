@@ -4,6 +4,7 @@ import { UserContext } from '../context/UserContext';
 import { usePostContext } from '../context/PostContext';
 import { FaHeart, FaCommentDots, FaClock, FaBell, FaUser, FaSignOutAlt, FaPlusCircle, FaShare, FaBookmark, FaMapMarkerAlt, FaSmile, FaPaperclip, FaPaperPlane, FaImage } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 
 const HomeFeed = () => {
   const navigate = useNavigate();
@@ -95,6 +96,17 @@ const HomeFeed = () => {
       setIsSubmittingPost(false);
     }
   };
+
+  const handleSharePost = async (postId) => {
+    try {
+        await axios.post(`/api/posts/${postId}/share`);
+        await fetchPosts(); // Refresh the posts
+    } catch (error) {
+        console.error('Error sharing post:', error);
+    }
+  };
+
+
   return (
     <div className="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen text-white">
       <nav className="bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-lg p-4 shadow-md sticky top-0 z-10">
@@ -247,14 +259,15 @@ const HomeFeed = () => {
                       </motion.button>
   
                       <motion.button 
-                        onClick={() => sharePost(post._id)}
-                        className="flex items-center space-x-2 transition-colors duration-200 hover:text-green-500"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                          onClick={() => handleSharePost(post._id)}
+                          className="flex items-center space-x-2 transition-colors duration-200 hover:text-green-500"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
                       >
-                        <FaShare className="text-xl" />
-                        <span>Share</span>
+                          <FaShare className="text-xl" />
+                          <span>{post.shares || 0}</span>
                       </motion.button>
+
   
                       <motion.button 
                         onClick={() => savePost(post._id)}

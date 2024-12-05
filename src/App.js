@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import HomeFeed from './pages/HomeFeed';
 import Profile from './pages/Profile';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/UserContext';
 import { PostProvider } from './context/PostContext';
 import './App.css';
@@ -21,6 +23,8 @@ const App = () => {
                         <Route path="/register" element={<Register />} />
                         <Route path="/homefeed/" element={<HomeFeed />} />
                         <Route path="/profile/:userId" element={<Profile />} />
+                        <Route path="/admin/login" element={<AdminLogin />} />
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
                     </Routes>
                 </Router>
             </PostProvider>

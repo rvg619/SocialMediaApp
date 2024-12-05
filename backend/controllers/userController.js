@@ -264,6 +264,29 @@ const userController = {
             res.status(500).json({ success: false, message: 'Server error' });
         }
     },
+
+        // Fetch all users (for admin)
+    getAllUsers: async (req, res) => {
+        try {
+        const users = await UserBio.find();
+        res.status(200).json(users);
+        } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ message: 'Server error: Unable to fetch users' });
+        }
+    },
+
+    // Delete a user (for admin)
+    deleteUser: async (req, res) => {
+        try {
+        const { id } = req.params;
+        await UserBio.findByIdAndDelete(id);
+        res.status(200).json({ message: 'User deleted successfully' });
+        } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Server error: Unable to delete user' });
+        }
+    },
 };
 
 export default userController;

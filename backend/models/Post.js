@@ -56,6 +56,10 @@ const postSchema = new Schema(
       type: [commentSchema], // Array of comments using the defined schema
       default: [], // Default to an empty array if no comments
     },
+    shares: {
+      type: Number,
+      default: 0, // Default share count is zero
+    },
   },
   { timestamps: true } // Adds createdAt and updatedAt fields
 );

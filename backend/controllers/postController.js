@@ -195,6 +195,53 @@ const postController = {
       res.status(500).json({ message: 'Error adding comment to post' });
     }
   },
+  sharePost: async (req, res) => {
+    try {
+        const { id } = req.params; // Post ID from URL
+        const post = await Post.findById(id);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        post.shares += 1; // Increment the share count
+        await post.save();
+
+        res.status(200).json({ message: 'Post shared successfully', post });
+    } catch (error) {
+        console.error('Error sharing post:', error);
+        res.status(500).json({ message: 'Server error: Unable to share post' });
+    }
+  },
+
+  // Fetch all posts (for admin)
+  getAllPosts: async (req, res) => {
+    try {
+      const posts = await Post.find().sort({ createdAt: -1 });
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).json({ message: 'Server error: Unable to fetch posts' });
+    }
+  },
+
+  // Delete a post (already exists but ensure it's accessible by admin)
+  deletePost: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deletedPost = await Post.findByIdAndDelete(id);
+      if (!deletedPost) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+      res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).json({ message: 'Server error: Unable to delete post' });
+    }
+  },
+
 };
+
+
 
 export default postController;
