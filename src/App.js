@@ -11,6 +11,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/UserContext';
 import { PostProvider } from './context/PostContext';
 import './App.css';
+import { withAuthenticator } from '@aws-amplify/ui-react';
 
 const App = () => {
     return (
@@ -32,4 +33,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default withAuthenticator(App);
