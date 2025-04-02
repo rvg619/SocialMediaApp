@@ -32,7 +32,7 @@
     "react-toastify": "^10.0.6",
     "tailwind": "^4.0.0",
     "web-vitals": "^4.2.4",
-    "@aws-amplify/ui-react": "^6.0.0",
+    "@aws-amplify/ui-react": "^5.0.0",
     "aws-amplify": "^5.0.0"
   },
   "scripts": {
