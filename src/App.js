@@ -12,6 +12,10 @@ import { AuthProvider } from './context/UserContext';
 import { PostProvider } from './context/PostContext';
 import './App.css';
 import { withAuthenticator } from '@aws-amplify/ui-react';
+import awsconfig from './aws-exports';
+import Amplify from 'aws-amplify';
+
+Amplify.configure(awsconfig);
 
 const App = () => {
     return (
